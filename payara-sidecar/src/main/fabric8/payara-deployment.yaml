@@ -1,0 +1,30 @@
+spec:
+  replicas: 1
+  volumes:
+    - name: apps
+      emptyDir: {}
+  template:
+    spec:
+      metadata:
+        labels:
+          run: payara
+      containers:
+      - image: pdudits/%a:%l
+        name: app-%a
+        volumeMounts:
+          - name: apps
+            mountDir: /apps
+        lifeCycle:
+          postStart:
+            exec:
+              command: ["/bin/cp","-a","/maven/*.war","/apps"]
+      - image: payara/server-full:171
+        name: payara
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 4848
+          name: admin
+        volumeMounts:
+          - name: apps
+            mountDir: /opt/payara41/deployments
