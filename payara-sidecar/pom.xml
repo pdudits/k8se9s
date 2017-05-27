@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-    <artifactId>k8se9s</artifactId>
-    <groupId>net.dudits.k8se9s</groupId>
-    <version>0.1-SNAPSHOT</version>
-  </parent>
+        <artifactId>k8se9s</artifactId>
+        <groupId>net.dudits.k8se9s</groupId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
 
     <groupId>net.dudits.k8se9s</groupId>
     <artifactId>payara-sidecar</artifactId>
@@ -30,6 +30,7 @@
     </dependencies>
 
     <build>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -45,6 +46,7 @@
                     <images>
                         <image>
                             <name>pdudits/%a:%l</name>
+                            <alias>app-sidecar</alias>
                             <build>
                                 <from>busybox:1</from>
                                 <assembly>
@@ -53,7 +55,17 @@
                             </build>
                         </image>
                     </images>
+                    <profile>default</profile>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>fabric8-default</id>
+                        <goals>
+                            <goal>resource</goal>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

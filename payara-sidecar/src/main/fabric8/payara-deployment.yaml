@@ -1,30 +1,28 @@
 spec:
   replicas: 1
-  volumes:
-    - name: apps
-      emptyDir: {}
   template:
+    metadata:
+      labels:
+        run: payara      
     spec:
-      metadata:
-        labels:
-          run: payara
+      volumes:
+      - name: apps
+        emptyDir: {}          
       containers:
-      - image: pdudits/%a:%l
-        name: app-%a
+      - alias: app-sidecar
+        imagePullPolicy: IfNotPresent
         volumeMounts:
-          - name: apps
-            mountDir: /apps
-        lifeCycle:
-          postStart:
-            exec:
-              command: ["/bin/cp","-a","/maven/*.war","/apps"]
+        - name: apps
+          mountPath: /apps
+        command: ["sh","-c", "echo hello; cp -a /maven/*.war /apps; tail -f /dev/null"]
       - image: payara/server-full:171
         name: payara
+        command: ["bin/asadmin", "start-domain", "-v"]
         ports:
         - containerPort: 8080
           name: http
         - containerPort: 4848
           name: admin
         volumeMounts:
-          - name: apps
-            mountDir: /opt/payara41/deployments
+        - name: apps
+          mountPath: /opt/payara41/glassfish/domains/domain1/autodeploy
