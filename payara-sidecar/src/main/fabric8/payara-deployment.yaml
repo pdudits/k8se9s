@@ -6,23 +6,23 @@ spec:
         run: payara      
     spec:
       volumes:
-      - name: apps
+      - name: apps                    # <1>
         emptyDir: {}          
       containers:
-      - alias: app-sidecar
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-        - name: apps
+      - alias: app-sidecar            # <2>
+        imagePullPolicy: Always
+        volumeMounts:          
+        - name: apps                  # <3>
           mountPath: /apps
-        command: ["sh","-c", "echo hello; cp -a /maven/*.war /apps; tail -f /dev/null"]
-      - image: payara/server-full:171
+        command: ["sh","-c", "cp -a /maven/*.war /apps; tail -f /dev/null"] # <4>
+      - image: payara/server-full:171 # <5>
         name: payara
         command: ["bin/asadmin", "start-domain", "-v"]
-        ports:
+        ports:                        # <6>
         - containerPort: 8080
           name: http
         - containerPort: 4848
           name: admin
         volumeMounts:
-        - name: apps
+        - name: apps                  # <7>
           mountPath: /opt/payara41/glassfish/domains/domain1/autodeploy
