@@ -10,8 +10,7 @@ spec:
         emptyDir: {}          
       containers:
       - alias: app-sidecar            # <2>
-        imagePullPolicy: Always
-        volumeMounts:          
+        volumeMounts:
         - name: apps                  # <3>
           mountPath: /apps
         command: ["sh","-c", "cp -a /maven/*.war /apps; tail -f /dev/null"] # <4>
